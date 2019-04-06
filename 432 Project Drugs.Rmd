@@ -1,0 +1,38 @@
+---
+title: "432 Project Drugs"
+output: pdf_document
+---
+
+```{r}
+drugs = read_csv('drugs.csv')
+```
+```{r}
+head(drugs)
+```
+
+Apply k-means clustering to the drugs data
+```{r}
+clusterNum = c(1,2,5,8,10)
+withinDistance = rep(1,5)
+for (i in c(1:length(clusterNum))){
+  cellClusters = kmeans(drugs[, 2:1533], nstart =20, clusterNum[i])
+  withinDistance[i] = cellClusters$tot.withinss
+}
+plot(clusterNum, withinDistance)
+
+```
+
+Based on the elbow plot, choosing to cluster the drugs into 5 clusters is a good decision.
+```{r}
+drugClusters = kmeans(drugs[, 2:1533], nstart =20, 5)
+```
+
+Doing PCA on the drugs data
+```{r}
+drugs.pca = prcomp(drugs[, 2:1533], center = TRUE, scale = TRUE)
+```
+
+```{r}
+summary(drugs.pca)
+```
+

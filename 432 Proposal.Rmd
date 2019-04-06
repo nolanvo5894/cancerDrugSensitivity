@@ -1,0 +1,82 @@
+---
+title: "432 Proposal: Predicting Drug Sensitivity of Cancer Cell Lines"
+author: "Lam Vo - NetID: lamvo2"
+date: "11/20/2018"
+output: pdf_document
+---
+
+**Motivation**
+
+As sequencing technologies make it possible to collect vast amount of data about the cellular environment in complex diseases, the use of statistical learning techniques to integrate and analyze these data sources and guide personalized treatment decisions has attracted great interest from the scientific community. One exciting open challenge is how to accurately predict the potency of drugs on cancer tumors given the tumor cells' omics profiles (such as genomics, transcriptomics, or proteomics).
+
+Different kinds of features representing both the drug and the cancer cells have been used to trained predictive models to address this challenge. While mRNA levels and mutation profiles are popular choices for representing cancer cells, I believe protein levels offer a more accurate depiction of the cellular environment than the two mentioned data sources. Drug molecules have often been represented by structural features (e.g. size and topology) and physical properties (e.g molecular weight, polarity, and lipophilicity). However, the link between these features and the drugs' effects on the cellular environment is rarely clear.
+
+A new method for profiling small molecules' bioactivities is morphological profiling. In this method, a library of compounds are given to a standard cancer cell line, and changes in the cells' morphology (e.g. size and shape of the cell, location of the nuclei and organelles as well as their fluorescent intensities upon staining with fluorescent dyes) after the treatment are measured from microscopic images. The molecules' effects on the cellular environment have been shown to manifest in these changes in morphology, and thus I believe they could be used as effective descriptors and predictors for the molecules' bioactivities.
+
+**Analysis Task** 
+
+*My project aims to train a regression model that can take as input a query drug's morphological profile and a query cell line's protein levels (measured by reverse phase protein arrays) and predict the drug's potency on the cancer cell line as measured by area-under-percent-viability-curve (AUC) of that drug-cell line pair.* The definition of AUC is illustrated in plot B in Figure 1 below. The horizontal axis is the drug's concentration and the vertical axis is the percent of cells from a population of the cell line killed by the drug. AUC is the red area in the plot. *A high AUC means the drug achieves high killing percentage at a low dose, or in other words, the drug is more potent on the cell line in the drug-cell line pair being investigated.*
+
+![AUC definition](AUC.jpg)
+
+If time allows, I will also train another model using the same drugs' structural and chemical features for comparison of predictive power between these kind of features and morphological profiles.
+
+**Datasets and Data Preprocessing**
+
+The drugs' morphological profiles were extracted from GigaDB at [this link](http://gigadb.org/dataset/100351) and missing and duplicate data points have been removed. For every row, the first column is the drug' master ID in the CTRP database, and the remaining columns contain measurements for morphological properties of U2OS (an osteosarcoma cell line) cells upon treatment with that drug. There are 80 drugs and 1532 morphological properties.
+```{r}
+drugs = read.csv('drugs.csv')
+head(drugs[, 1:3])
+dim(drugs)
+sum(is.na(drugs)) # check for missing data points
+sum(duplicated(drugs)) # check for duplicate data points.
+```
+
+The cell lines' protein levels data were downloaded from the Cancer Cell Line Encyclopedia [CCLE](https://portals.broadinstitute.org/ccle) and removed missing and duplicate data points. For every row, the first column is the name of the cell line and the subsequent columns are the names of the proteins whose expression levels are being measured. There are 899 cell lines and 214 proteins.
+```{r}
+cellProteins = read.csv('cellProteins.csv')
+head(cellProteins[, 1:3])
+dim(cellProteins)
+sum(is.na(cellProteins)) # check for missing data points
+sum(duplicated(cellProteins)) # check for duplicate data points.
+```
+
+The data on drugs' potency on cell lines were downloaded from the Cancer Therapeutics Response Portal [CTRP](https://portals.broadinstitute.org/ctrp/) and removed missing and duplicate data points. For every row, the first column contains AUC value, the second column is the drug's master ID in the CTRP database, and the third column is the name of the cell line treated with the drug. There are 54805 observations.
+```{r}
+AUCs = read.csv('AUCs.csv')
+head(AUCs)
+dim(AUCs)
+sum(is.na(AUCs)) # check for missing data points
+sum(duplicated(AUCs)) # check for duplicate data points.
+```
+
+```{r}
+write.csv(AUCs, file = 'AUCs.csv', row.names = FALSE)
+```
+
+I have already preprocessed and cleaned the data frames after downloading them from online sources. All 3 do not contain any null values or duplicate rows (as shown aboved).
+
+I have merged these 3 data frames into one big one. This data frame contains 49536 drug-cell line pairs, the identities of the drug and the cell line in each pair, their corresponding AUC values, and features of both the drugs and the cell lines.
+```{r}
+big = merge(AUCs, drugs, all = FALSE)
+big = merge(big, cellProteins, all = FALSE)
+dim(big)
+head(big[, 1:5])
+sum(is.na(big))
+sum(duplicated(big))
+```
+
+**Method**
+
+I plan to employ the following regression algorithms:
+
+* Elastic Net
+* Random Forest
+* Deep Neural Network
+
+Train-test split and k-fold cross-validation will be used to compare the performance of these algorithms. I plan to use Root Mean Square Error (RMSE) and R2 score as performance metrics.
+
+**Challenges**
+
+The merged data frame is pretty big (over 1 GB in size), so computational power and time would pose a challenge. Another challenge is the large number of features and features being highly correlated. Extensive feature selection and feature engineering will be needed for best predictive performance.
+Dissecting the models afterward (if they do perform well enough) to extract insights into factors affecting cancer cell lines' drug sensitivity would be interesting but challenging as well. 

@@ -1,0 +1,24 @@
+---
+title: "432 Project EDA"
+author: "Lam Vo"
+date: "12/9/2018"
+output: pdf_document
+---
+
+**Clustering drugs based on morphological profiles*
+```{r}
+drugs = read.csv('drugs.csv')
+head(drugs)
+```
+
+```{r}
+library(ggplot2)
+rownames(drugs) = drugs$Master.ID
+drugs = drugs[, -1]
+```
+
+```{r}
+head(drugs)
+```
+
+

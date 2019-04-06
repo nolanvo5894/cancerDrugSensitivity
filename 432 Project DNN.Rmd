@@ -1,0 +1,87 @@
+---
+title: "432 Project DNN"
+author: "Lam Vo"
+date: "12/9/2018"
+output: pdf_document
+---
+
+*Training a Deep Neural Network*
+Load in Keras
+```{r}
+library(keras)
+```
+
+Construct the network
+```{r}
+build.ANN = function(){
+  model = keras_model_sequential() %>%
+  layer_dense (units = 512, kernel_regularizer = regularizer_l2(0.002), input_shape = c(1746)) %>%
+  layer_batch_normalization() %>%
+  layer_activation('relu') %>%
+  
+  layer_dense (units = 256, kernel_regularizer = regularizer_l2(0.002)) %>%
+  layer_batch_normalization() %>%
+  layer_activation('relu') %>%
+ 
+  layer_dense (units = 64, kernel_regularizer = regularizer_l2(0.002)) %>%
+  layer_batch_normalization() %>%
+  layer_activation('relu') %>%
+  
+  layer_dense (units = 1)
+
+model %>% compile(
+  optimizer = optimizer_adam(lr = 0.0008),
+  loss = 'mse',
+  metrics = c('mae')
+)
+}
+```
+
+Perform k-fold cross validation
+
+```{r}
+k = 3
+indices = sample(1:nrow(train))
+folds = cut(indices, breaks = k, labels = FALSE)
+
+all.score = c()
+  model = build.ANN()
+  
+  for (i in 1:k){
+  cat('Processing fold #', i, '\n')
+  
+  val.indices = which(folds == i, arr.ind = TRUE)
+  val.data = train.x[val.indices, ]
+  val.response = train.y[val.indices]
+  
+  partial.train.data = train.x[-val.indices, ]
+  partial.train.response = train.y[-val.indices, ]
+  
+  
+  model %>% fit (partial.train.data,
+                 partial.train.response,
+                 epochs = 50,
+                 batch_size = 64,
+                 verbose = 0)
+  results = model %>% evaluate(val.data, val.response, verbose = 0)
+  cat('Results fold #', i, results$mean_absolute_error, '\n')
+  
+  
+  all.score = c(all.score, results$mean_absolute_error)
+}
+```
+
+```{r}
+# CV for ANN
+mean(all.score)
+```
+```{r}
+All.l2.regularizer = c(0.002)
+All.adam.learningrate = c(8e-4)
+All.Score = c(mean(all.score))
+DNN.All = cbind(All.Score, All.adam.learningrate, All.l2.regularizer)
+```
+
+```{r}
+DNN.All
+```

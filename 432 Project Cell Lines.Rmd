@@ -1,0 +1,44 @@
+---
+title: "432 Project Cell Lines"
+output: pdf_document
+---
+
+```{r}
+library(readr)
+cellLines = read_csv('cellProteins.csv')
+```
+```{r}
+head(cellLines)
+```
+
+Apply k-means clustering to the cellLines data
+```{r}
+clusterNum = c(1,2,5,10,15,20,25,30,35)
+withinDistance = rep(1,9)
+for (i in c(1:length(clusterNum))){
+  cellClusters = kmeans(cellLines[, 2:215], nstart =20, clusterNum[i])
+  withinDistance[i] = cellClusters$tot.withinss
+}
+plot(clusterNum, withinDistance)
+
+```
+
+Based on the elbow plot, choosing to cluster the cell lines into 10 clusters is a good decision.
+```{r}
+cellClusters = kmeans(cellLines[, 2:215], nstart =20, 10)
+```
+
+Doing PCA on the cellLine data
+```{r}
+cellLines.pca = prcomp(cellLines[, 2:215], center = TRUE, scale = TRUE)
+```
+
+```{r}
+summary(cellLines.pca)
+```
+
+Get the list of cell lines in each cluster
+```{r}
+
+```
+
