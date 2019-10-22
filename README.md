@@ -21,7 +21,7 @@ they could be used as effective descriptors and predictors for the molecules’ 
 query cell line’s protein levels (measured by reverse phase protein arrays) and predict the drug’s potency on
 the cancer cell line as measured by area-under-percent-viability-curve (AUC) of that drug-cell line pair.*<br>
 
-This study explored the use of drugs' morphological profile as a new, useful set of features for building predictive models of drug response in cancer cell line. The model achived an RMSE of 1.201 and an $R^2$ value of 0.687. Furthermore, morphological features, when examined in parallel with -omics data from cancer cell line, revealed potential relationships between the drugs and intracellular molecules and pathways that can be validated and exploited for development of more potent and personalized cancer therapeutics.
+This study explored the use of drugs' morphological profile as a new, useful set of features for building predictive models of drug response in cancer cell line. The model achived an RMSE of 1.201 and an R^2 value of 0.687. Furthermore, morphological features, when examined in parallel with -omics data from cancer cell line, revealed potential relationships between the drugs and intracellular molecules and pathways that can be validated and exploited for development of more potent and personalized cancer therapeutics.
 
 Some future directions that I plan to pursue further are:
 * Try fitting Random Forest with features selected from the LASSO. Pre-modeling feature selection might improve the model's predictive power.
