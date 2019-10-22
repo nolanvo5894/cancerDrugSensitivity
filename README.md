@@ -17,15 +17,15 @@ with fluorescent dyes) after the treatment are measured from microscopic images.
 the cellular environment have been shown to manifest in these changes in morphology, and thus I believe
 they could be used as effective descriptors and predictors for the molecules’ bioactivities.<br>
 
-*My project aims to train a regression model that can take as input a query drug’s morphological profile and a
-query cell line’s protein levels (measured by reverse phase protein arrays) and predict the drug’s potency on
-the cancer cell line as measured by area-under-percent-viability-curve (AUC) of that drug-cell line pair.*<br>
+*My project aims to train a regression model that can take as input a query drug’s morphological profile (data collected from [GigaDB](http://gigadb.org/dataset/100351)  and a
+query cell line’s protein levels (data collected from from the Cancer Cell Line Encyclopedia [CCLE](https://portals.broadinstitute.org/ccle) and predict the drug’s potency on
+the cancer cell line as measured by area-under-percent-viability-curve or of that drug-cell line pair (data collected from the Cancer Therapeutics Response Portal [CTRP](https://portals.broadinstitute.org/ctrp/). *<br>
 
-This study explored the use of drugs' morphological profile as a new, useful set of features for building predictive models of drug response in cancer cell line. The model achived an RMSE of 1.201 and an R^2 value of 0.687. Furthermore, morphological features, when examined in parallel with -omics data from cancer cell line, revealed potential relationships between the drugs and intracellular molecules and pathways that can be validated and exploited for development of more potent and personalized cancer therapeutics.
+This study explored the use of drugs' morphological profile as a new, useful set of features for building predictive models of drug response in cancer cell line. The fine-tuned random forest model achived an RMSE of 1.201 (on a 0 - 30 range) and an R^2 value of 0.687. Furthermore, morphological features, when examined in parallel with -omics data from cancer cell line, revealed potential relationships between the drugs and intracellular molecules and pathways that can be validated and exploited for development of more potent and personalized cancer therapeutics.
 
 Some future directions that I plan to pursue further are:
 * Try fitting Random Forest with features selected from the LASSO. Pre-modeling feature selection might improve the model's predictive power.
 * Ensemble morphology - protein model with models using other data sources (e.g. morphology - RNA expression or morphology - somatic mutation)
-* Extensive mining of morphology - protein relationships in remaining drug cluster - cell line cluster pairs.
-* Validation of these pathways.
+* Extensive mining of morphology - protein relationships in all identified drug cluster - cell line cluster pairs.
+* Validation of pathways identified from the investigating the predictive model.
 * Using deep neural network (e.g. convolution neural network) to directly extract morphological features for drugs from microscopic images of standard cancer cells treated with those drugs. At the moment these features come from hand-crafted, hard-defined rules. These rules may not be able to capture all the information in the images. This would require tremendous computing power and powerful algorithms, which is a major challenge.
